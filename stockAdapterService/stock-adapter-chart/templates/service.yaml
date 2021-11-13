@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "stock-adapter-chart.fullname" . }}
+  labels:
+    {{- include "stock-adapter-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: web
+  selector:
+    {{- include "stock-adapter-chart.selectorLabels" . | nindent 4 }}

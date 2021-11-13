@@ -1,0 +1,646 @@
+{
+	"info": {
+		"_postman_id": "5980841d-9031-4e5a-ac64-9c08081120b1",
+		"name": "All services test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "регистрация пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"password\", pm.variables.replaceIn('{{$randomPassword}}'))",
+							"pm.collectionVariables.set(\"email\", pm.variables.replaceIn('{{$randomEmail}}'))",
+							"pm.collectionVariables.set(\"login\", pm.variables.replaceIn('{{$randomUserName}}'))",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"login\": \"{{login}}\", \n\t\"password\": \"{{password}}\",\n\t\"email\": \"{{email}}\",\n\t\"first_name\": \"{{firstName}}\",\n\t\"last_name\": \"{{lastName}}\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/register",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "логин",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"IDtoken\", responseJSON[\"IDtoken\"])"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"login\": \"{{login}}\", \"password\": \"{{password}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "проверить данные о пользователе ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"test token data\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.email).to.eql(pm.collectionVariables.get(\"email\"))",
+							"    pm.expect(jsonData.last_name).to.eql(pm.collectionVariables.get(\"lastName\"))",
+							"    pm.expect(jsonData.first_name).to.eql(pm.collectionVariables.get(\"firstName\"))",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{IDtoken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/auth",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Создание профиля",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"var jsonData = pm.response.json();",
+							"pm.collectionVariables.set(\"profileId\", jsonData[\"id\"]);",
+							"setTimeout(function(){}, 3000);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"countryCode\", pm.variables.replaceIn('{{$randomInt}}'))",
+							"pm.collectionVariables.set(\"documentType\", pm.variables.replaceIn('{{$randomInt}}'))",
+							"pm.collectionVariables.set(\"documentSeries\", pm.variables.replaceIn('{{$randomInt}}'))",
+							"pm.collectionVariables.set(\"documentNumber\", pm.variables.replaceIn('{{$randomInt}}'))",
+							"pm.collectionVariables.set(\"firstName\", pm.variables.replaceIn('{{$randomFirstName}}'))",
+							"pm.collectionVariables.set(\"lastName\", pm.variables.replaceIn('{{$randomLastName}}'))",
+							"pm.collectionVariables.set(\"middleName\", pm.variables.replaceIn('{{$randomFirstName}}'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"1\",\n\t\"firstName\": \"{{firstName}}\", \n\t\"middleName\": \"{{middleName}}\",\n    \"lastName\":\"{{lastName}}\",\n    \"countryCode\":\"{{countryCode}}\",\n    \"documentType\":\"{{documentType}}\",\n    \"documentSeries\":\"{{documentSeries}}\",\n    \"documentNumber\":\"{{documentNumber}}\"\n    }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+
+		{
+			"name": "Получаем статус зарегистрированного профиля",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.expect(pm.response.text()).to.eql('REGISTERED');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profile/status/{{profileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						"status",
+						"{{profileId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменяем профиль",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200);",
+							"setTimeout(function(){}, 4000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \"id\":{{profileId}},\n\t\"userId\": \"1\",\n\t\"firstName\": \"FirsName71\", \n\t\"middleName\": \"MiddleName71\",\n    \"lastName\":\"LasName\",\n    \"countryCode\":\"643\",\n    \"documentType\":\"21\",\n    \"documentSeries\":\"1111\",\n    \"documentNumber\":\"222222\",\n    \"version\":\"1\"\n    }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+
+		{
+			"name": "Получаем статус профиля после изменения",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.expect(pm.response.text()).to.eql('REGISTERED');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "profileId",
+						"value": "{{version}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/profile/status/{{profileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						"status",
+						"{{profileId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Создание договора",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(201)",
+							"var jsonData = pm.response.json();",
+							"pm.collectionVariables.set(\"contractId\", jsonData[\"id\"]);",
+							"setTimeout(function(){}, 3000);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"contractNumber\", pm.variables.replaceIn('{{$randomInt}}'))",
+							"pm.collectionVariables.set(\"marketPlaceFx\", pm.variables.replaceIn('{{randomBoolean}}'))",
+							"pm.collectionVariables.set(\"marketPlaceForts\", pm.variables.replaceIn('{{randomBoolean}}'))"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"profileId\": {{profileId}},\n        \"number\": \"555\",\n        \"marketPlaceFx\": false,\n        \"marketPlaceForts\": false,\n        \"marketPlaceFond\": true,\n        \"version\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/contract/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"contract",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удаляем профиль, получаем статус DELETE_REJECTED так как есть договор с открытой фондовой площадкой",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200);",
+							"setTimeout(function(){}, 3000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile/{{profileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						"{{profileId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получаем статус профиля",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.expect(pm.response.text()).to.eql('DELETE_REJECTED');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profile/status/{{profileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						"status",
+						"{{profileId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменяем договор",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"id\": {{contractId}},\n        \"profileId\": {{profileId}},\n        \"number\": \"927e1f7f-1770-47a1-9ecd-156d9bce4311\",\n        \"marketPlaceFx\": true,\n        \"marketPlaceForts\": false,\n        \"marketPlaceFond\": false,\n        \"version\": 0\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/contract/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"contract",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удаляем профиль, получаем статус DELETE_REGISTERED так как уже нет договора с открытой фондовой площадкой",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.response.to.have.status(200);",
+							"setTimeout(function(){}, 3000);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/profile/{{profileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						"{{profileId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получаем статус профиля",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.expect(pm.response.text()).to.eql('DELETE_REGISTERED');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/profile/status/{{profileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"profile",
+						"status",
+						"{{profileId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "логаут",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/logout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"tests[\"[INFO] Request: \" + (('data' in request) ? request['data'] : '') ] = true;",
+					"tests[\"[INFO] Response: \" + responseBody] = true;"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "IDtoken",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "login",
+			"value": ""
+		},
+		{
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"key": "middleName",
+			"value": ""
+		},
+		{
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://arch.homework"
+		},
+		{
+			"key": "countryCode",
+			"value": ""
+		},
+		{
+			"key": "documentType",
+			"value": ""
+		},
+		{
+			"key": "documentSeries",
+			"value": ""
+		},
+		{
+			"key": "documentNumber",
+			"value": ""
+		},
+		{
+			"key": "profileId",
+			"value": ""
+		},
+		{
+			"key": "contractId",
+			"value": ""
+		},
+		{
+			"key": "contractNumber",
+			"value": ""
+		},
+		{
+			"key": "marketPlaceFx",
+			"value": ""
+		},
+		{
+			"key": "marketPlaceForts",
+			"value": ""
+		},
+		{
+			"key": "marketPlaceFond",
+			"value": ""
+		}
+	]
+}

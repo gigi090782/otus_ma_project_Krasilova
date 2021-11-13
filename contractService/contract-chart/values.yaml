@@ -1,0 +1,12 @@
+replicaCount: 1
+
+fullnameOverride: "contract-service"
+
+image: "contract-service:latest"
+
+service:
+  type: NodePort
+  port: 8002
+
+externalPostgresql:
+  postgresqlDatabase: ProfileDB

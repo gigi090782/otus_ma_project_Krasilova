@@ -1,0 +1,47 @@
+server:
+  port: 8002
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/ProfileDB"
+    username: "postgres"
+    password: "postgres"
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: changelog.xml
+    default-schema: "public"
+    enabled: true
+  flyway:
+    enabled: false
+
+kafka:
+  profile:
+    topics: "profile_created,profile_deleted"
+    group:
+      id: "server.broadcast.profile"
+  contract:
+    topics: "contract_created,contract_updated,contract_deleted,contract_deleted_all,contract_deleted_all_rejected"
+    group:
+      id: "server.broadcast.contract"
+  server: "localhost:9092"
+
+#
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: prometheus,health
+  endpoint:
+    prometheus.enabled: true
+    health.enabled: true
+
+
+enable:
+  kafka: true
+  server:
+    kafka: "localhost:9092"

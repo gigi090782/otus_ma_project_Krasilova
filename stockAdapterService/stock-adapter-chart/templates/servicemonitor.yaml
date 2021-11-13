@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "stock-adapter-chart.fullname" . }}
+  labels:
+    {{- include "stock-adapter-chart.labels" . | nindent 4 }}
+spec:
+  jobLabel: {{ include "stock-adapter-chart.fullname" . }}
+  namespaceSelector:
+    matchNames:
+    - "{{ $.Release.Namespace }}"
+  selector:
+    matchLabels:
+      {{- include "stock-adapter-chart.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - interval: 15s
+    port: web
+    path: /actuator/prometheus
+    

@@ -1,0 +1,19 @@
+replicaCount: 1
+
+fullnameOverride: "stock-adapter-service"
+
+image: "stock-adapter-service:latest"
+
+service:
+  type: NodePort
+  port: 8001
+
+externalPostgresql:
+  postgresqlDatabase: ProfileDB
+
+
+ingress:
+  enabled: true
+  hosts:
+    - host: arch.homework
+      paths: ["/"]

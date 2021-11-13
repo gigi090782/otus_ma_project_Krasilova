@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stock-adapter-config
+data:
+  server.port: "8001"
+  spring.datasource.initialization-mode: "always"
+  spring.jpa.show-sql: "true"
+  spring.jpa.hibernate.ddl-auto: "none"
+  spring.liquibase.change-log: "changelog.xml"
+  spring.liquibase.default-schema: "public"
+  spring.liquibase.enabled: "false"
+
+  kafka.profile.topics: "profile_updated,profile_for_stock,profile_completely_created,profile_completely_deleted"
+  kafka.profile.group.id: "server.broadcast.profile"
+  kafka.stockAdapter.topic: "profile_stock_registered"
+  kafka.stockAdapter.group.id: "server.broadcast.stock-adapter"
+  kafka.server: "http://kafka.messaging.svc.cluster.local:9092"
+
+  management.endpoints.enabled-by-default: "false"
+  management.endpoints.web.exposure.include: "prometheus,health"
+  management.endpoints.prometheus.enabled: "true"
+  management.endpoints.health.enabled: "true"
+
+  enable.kafka: "true"
+  enable.server.kafka: "http://kafka.messaging.svc.cluster.local:9092"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: stock-adapter-secret
+type: Opaque
+data:
+  spring.datasource.url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXM6NTQzMi9Qcm9maWxlREI=
+  spring.datasource.username: cG9zdGdyZXM=
+  spring.datasource.password: cG9zdGdyZXM=
+  POSTGRES_USER: cG9zdGdyZXM=
+  POSTGRES_PASSWORD:  cG9zdGdyZXM=

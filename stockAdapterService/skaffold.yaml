@@ -1,0 +1,16 @@
+apiVersion: skaffold/v2beta2
+kind: Config
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+  - image: stock-adapter-service
+    context: .
+deploy:
+  helm:
+    releases:
+    - name: stock-adapter-service
+      chartPath: stock-adapter-chart
+      skipBuildDependencies: true
+      values:
+        image: stock-adapter-service

@@ -1,0 +1,19 @@
+replicaCount: 1
+
+fullnameOverride: "auth"
+
+image: "auth:0.1.0"
+
+service:
+  type: NodePort
+  port: 9000
+
+postgresql:
+  enabled: true
+  postgresqlUsername: postgres
+  postgresqlPassword: postgres
+  postgresqlDatabase: authdb
+  persistence:
+    size: 0.1Gi
+  service:
+    port: "5432"
